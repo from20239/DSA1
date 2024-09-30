@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>webside1</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">GitHub Repositories Viewer</h1>
+        <div class="form-group">
+            <label for="githubUsername">Enter GitHub Username:</label>
+            <input type="text" id="githubUsername" class="form-control">
+        </div>
+        <button id="getRepos" class="btn btn-primary">Get Repositories</button>
+    </div>
+
+        <div class="container mt-4">
+            <table class="table table-bordered table-striped" id="repoTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Stars</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Repositories will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        $(document).ready(function () {
+            $('#getRepos').click(function () {
+                var username = $('#githubUsername').val();
+                if (username) {
+                    fetchRepositories(username);
+                } else {
+                    alert('Please enter a GitHub username.');
+                }
+            });
+
+            function fetchRepositories(username) {
+                $.get(`https://api.github.com/users/${username}/repos`, function (data) {
+                    // Clear previous data
+                    $('#repoTable tbody').empty();
+
+                    // Loop through the repositories and add them to the table
+                    data.forEach(function (repo) {
+                        $('#repoTable tbody').append(`
+                                <tr>
+                                    <td>${repo.name}</td>
+                                    <td>${repo.description || 'No description'}</td>
+                                    <td>${repo.stargazers_count}</td>
+                                </tr>
+                            `);
+                    });
+                }).fail(function () {
+                    alert('Error fetching repositories. Please check the username and try again.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
